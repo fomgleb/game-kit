@@ -4,7 +4,7 @@ pub fn build(b: *std.Build) void {
     const t = b.standardTargetOptions(.{});
     const o = b.standardOptimizeOption(.{});
 
-    const embed_resources = b.option(bool, "embed-resources", "Embed contents of `resources` folder into the executable?");
+    const embed_resources = b.option(bool, "embed_resources", "Embed contents of `resources` folder into the executable?");
     const options = b.addOptions();
     options.addOption(bool, "embed_resources", embed_resources orelse false);
 
