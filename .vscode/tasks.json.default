@@ -1,0 +1,33 @@
+{
+    "version": "2.0.0",
+    "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
+    },
+    "group": {
+        "kind": "test",
+        "isDefault": false
+    },
+    "type": "shell",
+    "tasks": [
+        {
+            "label": "RUN TESTS",
+            "command": "zig build test --prominent-compile-errors --summary all",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "focus": true
+            }
+        },
+        {
+            "label": "BUILD TEST",
+            "command": "zig build install --prominent-compile-errors --summary all",
+        }
+    ]
+}

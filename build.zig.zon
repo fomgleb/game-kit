@@ -1,0 +1,25 @@
+.{
+    .name = .game_kit,
+    .version = "0.1.0",
+    .fingerprint = 0x43ce8bddba17086b,
+    .minimum_zig_version = "0.15.1",
+    .dependencies = .{
+        .sdl = .{
+            .url = "git+https://github.com/castholm/SDL#1994ca5dbad5a3e3c670a9ab8533d86cfd97bdc0",
+            .hash = "sdl-0.2.6+3.2.20-7uIn9NgjfwHH5a6HhyLHat2nHU3OP5B05QHhKJKuxEex",
+        },
+        .sdl_image = .{
+            .url = "git+https://github.com/allyourcodebase/SDL_image#87e0f1f4c612441a6cf38cda07d8fe4dfc06b05e",
+            .hash = "SDL_image-3.2.4--aJoHb8WAACjnDQ_-PhUi-MNh_mYFODwxANtvY3F-yLe",
+        },
+        .sdl_ttf = .{
+            .url = "git+https://github.com/allyourcodebase/SDL_ttf#579f2e88f7c0788c80a9a6a3858f3665c79f74cb",
+            .hash = "SDL_ttf-3.2.2-PNW5xMwRAACCG5b3sazQTEj4I6jM1QCQ3KV0MfbrzRHT",
+        },
+    },
+    .paths = .{
+        "build.zig",
+        "build.zig.zon",
+        "src",
+    },
+}
