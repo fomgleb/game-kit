@@ -10,7 +10,7 @@ pub fn Vec2(T: type) type {
         }
 
         pub fn as(self: Self, NewType: type) Vec2(NewType) {
-            return Vec2(NewType){ .x = self.x, .y = self.y1 };
+            return Vec2(NewType){ .x = self.x, .y = self.y };
         }
 
         pub fn intCast(self: Self, NewType: type) Vec2(NewType) {
