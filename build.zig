@@ -4,9 +4,9 @@ pub fn build(b: *std.Build) void {
     const t = b.standardTargetOptions(.{});
     const o = b.standardOptimizeOption(.{});
 
-    const embed_resources = b.option(bool, "embed_resources", "Embed contents of `resources` folder into the executable?");
+    const embed_assets = b.option(bool, "embed_assets", "Embed assets into the executable?");
     const options = b.addOptions();
-    options.addOption(bool, "embed_resources", embed_resources orelse false);
+    options.addOption(bool, "embed_assets", embed_assets orelse false);
 
     b.modules.put(b.dupe("game_kit"), createModule(b, t, o, options, "src/root.zig")) catch @panic("OOM");
 
@@ -19,11 +19,11 @@ pub fn build(b: *std.Build) void {
 
 fn createCheckCmd(b: *std.Build, t: std.Build.ResolvedTarget, o: std.builtin.OptimizeMode) void {
     const options1 = b.addOptions();
-    options1.addOption(bool, "embed_resources", true);
+    options1.addOption(bool, "embed_assets", true);
     const check_cmd1 = b.addExecutable(.{ .name = "check", .root_module = createModule(b, t, o, options1, "src/check.zig") });
 
     const options2 = b.addOptions();
-    options2.addOption(bool, "embed_resources", false);
+    options2.addOption(bool, "embed_assets", false);
     const check_cmd2 = b.addExecutable(.{ .name = "check", .root_module = createModule(b, t, o, options2, "src/check.zig") });
 
     const check_step = b.step("check", "Check if the project compiles");

@@ -4,7 +4,7 @@ const config = @import("config");
 
 /// Returned buffer should be deallocated with `freeReadFile`.
 pub fn readFileAlloc(dir: std.fs.Dir, allocator: std.mem.Allocator, comptime file_path: []const u8, max_bytes: usize) ![]const u8 {
-    if (config.embed_resources)
+    if (config.embed_assets)
         return @embedFile(file_path)
     else
         return try dir.readFileAlloc(allocator, file_path, max_bytes);
@@ -12,12 +12,12 @@ pub fn readFileAlloc(dir: std.fs.Dir, allocator: std.mem.Allocator, comptime fil
 
 /// Deallocates the buffer returned by `readFileAlloc`.
 pub fn freeReadFile(allocator: std.mem.Allocator, file: []const u8) void {
-    if (!config.embed_resources) allocator.free(file);
+    if (!config.embed_assets) allocator.free(file);
 }
 
 pub fn openIoStream(comptime path: [:0]const u8) error{SdlError}!*sdl.IoStream {
     const io_stream = blk: {
-        if (config.embed_resources) {
+        if (config.embed_assets) {
             const file_content = @embedFile(path);
             break :blk try sdl.ioFromConstMem(file_content);
         } else {
