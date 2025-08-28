@@ -45,3 +45,8 @@ fn createModule(
     mod.addOptions("config", options);
     return mod;
 }
+
+/// Add assets in `build.zig` with this function.
+pub fn addAsset(b: *std.Build, mod: *std.Build.Module, asset_path: []const u8) void {
+    mod.addAnonymousImport(asset_path, .{ .root_source_file = b.path(asset_path) });
+}
