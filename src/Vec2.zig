@@ -5,6 +5,8 @@ pub fn Vec2(T: type) type {
         x: T,
         y: T,
 
+        pub const zero: Self = .{ .x = 0, .y = 0 };
+
         pub fn init(x: T, y: T) Self {
             return .{ .x = x, .y = y };
         }
