@@ -65,8 +65,8 @@ pub fn setRenderDrawColor(renderer: *Renderer, r: u8, g: u8, b: u8, a: u8) error
 
 pub fn renderFillRect(renderer: *Renderer, rect: Rect(f32)) error{SdlError}!void {
     if (!c.SDL_RenderFillRect(renderer, &.{
-        .x = rect.position.x,
-        .y = rect.position.y,
+        .x = rect.pos.x,
+        .y = rect.pos.y,
         .w = rect.size.x,
         .h = rect.size.y,
     })) {
@@ -91,8 +91,8 @@ pub fn renderTexture(
     if (!c.SDL_RenderTexture(
         renderer,
         texture,
-        if (srcrect) |r| &c.SDL_FRect{ .x = r.position.x, .y = r.position.y, .w = r.size.x, .h = r.size.y } else null,
-        if (dstrect) |r| &c.SDL_FRect{ .x = r.position.x, .y = r.position.y, .w = r.size.x, .h = r.size.y } else null,
+        if (srcrect) |r| &c.SDL_FRect{ .x = r.pos.x, .y = r.pos.y, .w = r.size.x, .h = r.size.y } else null,
+        if (dstrect) |r| &c.SDL_FRect{ .x = r.pos.x, .y = r.pos.y, .w = r.size.x, .h = r.size.y } else null,
     )) {
         log.err("Failed to SDL_RenderTexture: {s}", .{c.SDL_GetError()});
         return error.SdlError;
@@ -113,8 +113,8 @@ pub fn renderTextureRotated(
     if (!c.SDL_RenderTextureRotated(
         renderer,
         texture,
-        if (srcrect) |r| &.{ .x = r.position.x, .y = r.position.y, .w = r.size.x, .h = r.size.y } else null,
-        if (dstrect) |r| &.{ .x = r.position.x, .y = r.position.y, .w = r.size.x, .h = r.size.y } else null,
+        if (srcrect) |r| &.{ .x = r.pos.x, .y = r.pos.y, .w = r.size.x, .h = r.size.y } else null,
+        if (dstrect) |r| &.{ .x = r.pos.x, .y = r.pos.y, .w = r.size.x, .h = r.size.y } else null,
         angle,
         if (center) |c_vec| &.{ .x = c_vec.x, .y = c_vec.y } else null,
         switch (flip) {
@@ -167,8 +167,8 @@ pub fn getTextureSize(texture: *Texture) error{SdlError}!Vec2(f32) {
 
 pub fn hasRectIntersectionFloat(a: Rect(f32), b: Rect(f32)) bool {
     return c.SDL_HasRectIntersectionFloat(
-        &.{ .x = a.position.x, .y = a.position.y, .w = a.size.x, .h = a.size.y },
-        &.{ .x = b.position.x, .y = b.position.y, .w = b.size.x, .h = b.size.y },
+        &.{ .x = a.pos.x, .y = a.pos.y, .w = a.size.x, .h = a.size.y },
+        &.{ .x = b.pos.x, .y = b.pos.y, .w = b.size.x, .h = b.size.y },
     );
 }
 

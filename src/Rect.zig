@@ -4,12 +4,12 @@ pub fn Rect(T: type) type {
     return struct {
         const Self = @This();
 
-        position: Vec2(T),
+        pos: Vec2(T),
         size: Vec2(T),
 
         pub fn floatFromInt(self: Self, NewType: type) Rect(NewType) {
             return Rect(NewType){
-                .position = self.position.floatFromInt(NewType),
+                .pos = self.pos.floatFromInt(NewType),
                 .size = self.size.floatFromInt(NewType),
             };
         }
