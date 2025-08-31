@@ -4,3 +4,4 @@ pub const Color = @import("Color.zig");
 pub const Rect = @import("Rect.zig").Rect;
 pub const sdl = @import("sdl.zig");
 pub const Vec2 = @import("Vec2.zig").Vec2;
+pub const Vec3 = @import("Vec3.zig").Vec3;
