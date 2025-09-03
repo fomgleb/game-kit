@@ -99,6 +99,13 @@ pub fn renderTexture(
     }
 }
 
+pub fn renderLine(renderer: *Renderer, p1: Vec2(f32), p2: Vec2(f32)) error{SdlError}!void {
+    if (!c.SDL_RenderLine(renderer, p1.x, p1.y, p2.x, p2.y)) {
+        log.err("Failed to SDL_RenderLine: {s}", .{c.SDL_GetError()});
+        return error.SdlError;
+    }
+}
+
 pub const Flip = enum { none, horizontal, vertical };
 
 pub fn renderTextureRotated(
