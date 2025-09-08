@@ -12,6 +12,10 @@ pub fn Vec3(T: type) type {
             return .{ .x = x, .y = y, .z = z };
         }
 
+        pub fn splat(value: T) Self {
+            return .{ .x = value, .y = value, .z = value };
+        }
+
         pub fn as(self: Self, NewType: type) Vec3(NewType) {
             return Vec3(NewType){ .x = self.x, .y = self.y, .z = self.z };
         }

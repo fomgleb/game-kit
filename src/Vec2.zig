@@ -11,6 +11,10 @@ pub fn Vec2(T: type) type {
             return .{ .x = x, .y = y };
         }
 
+        pub fn splat(value: T) Self {
+            return .{ .x = value, .y = value };
+        }
+
         pub fn as(self: Self, NewType: type) Vec2(NewType) {
             return Vec2(NewType){ .x = self.x, .y = self.y };
         }

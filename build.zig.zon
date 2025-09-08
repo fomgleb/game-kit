@@ -1,6 +1,6 @@
 .{
     .name = .game_kit,
-    .version = "0.9.0",
+    .version = "0.10.0",
     .fingerprint = 0x43ce8bddba17086b,
     .minimum_zig_version = "0.15.1",
     .dependencies = .{
