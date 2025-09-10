@@ -82,6 +82,13 @@ pub fn getRendererFromTexture(texture: *Texture) !*Renderer {
     };
 }
 
+pub fn getRenderWindow(renderer: *Renderer) error{SdlError}!*Window {
+    return c.SDL_GetRenderWindow(renderer) orelse {
+        log.err("Failed to SDL_GetRenderWindow: {s}", .{c.SDL_GetError()});
+        return error.SdlError;
+    };
+}
+
 pub fn renderTexture(
     renderer: *Renderer,
     texture: *Texture,
