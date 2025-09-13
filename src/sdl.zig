@@ -1,5 +1,6 @@
 const Color = @import("Color.zig");
 const log = @import("std").log.scoped(.sdl);
+const Allocator = @import("std").mem.Allocator;
 const Vec2 = @import("Vec2.zig").Vec2;
 const Rect = @import("Rect.zig").Rect;
 
@@ -226,6 +227,74 @@ pub fn getWindowSize(window: *Window) error{SdlError}!Vec2(u32) {
 pub fn pollEvent() ?Event {
     var event: Event = undefined;
     if (c.SDL_PollEvent(&event)) return event else return null;
+}
+
+pub fn setMemoryFunctions(
+    malloc: ?*const fn (usize) callconv(.c) ?*anyopaque,
+    calloc: ?*const fn (usize, usize) callconv(.c) ?*anyopaque,
+    realloc: ?*const fn (?*anyopaque, usize) callconv(.c) ?*anyopaque,
+    free: ?*const fn (?*anyopaque) callconv(.c) void,
+) error{SdlError}!void {
+    if (!c.SDL_SetMemoryFunctions(malloc, calloc, realloc, free)) {
+        log.err("Failed to SDL_SetMemoryFunctions: {s}", .{c.SDL_GetError()});
+        return error.SdlError;
+    }
+}
+
+var allocator: ?Allocator = null;
+
+pub fn setAllocator(a: Allocator) error{SdlError}!void {
+    allocator = a;
+    const Functions = struct {
+        fn malloc(size: usize) callconv(.c) ?*anyopaque {
+            if (size == 0) return null;
+            const mem_size_with_len: usize = @sizeOf(usize) + size;
+            const mem_with_len: []u8 = allocator.?.alloc(u8, mem_size_with_len) catch return null;
+            @as(*usize, @ptrCast(@alignCast(mem_with_len.ptr))).* = size;
+            return mem_with_len.ptr + @sizeOf(usize);
+        }
+
+        fn calloc(nmemb: usize, size: usize) callconv(.c) ?*anyopaque {
+            const mem_size: usize = nmemb *% size;
+            if (mem_size == 0) return null;
+            const mem_size_with_len: usize = @sizeOf(usize) + mem_size;
+            const mem_with_len: []u8 = allocator.?.alloc(u8, mem_size_with_len) catch return null;
+            @as(*usize, @ptrCast(@alignCast(mem_with_len.ptr))).* = mem_size;
+            const mem: []u8 = mem_with_len[@sizeOf(usize)..];
+            @memset(mem, 0);
+            return mem.ptr;
+        }
+
+        fn realloc(ptr: ?*anyopaque, new_size: usize) callconv(.c) ?*anyopaque {
+            const p: *anyopaque = if (ptr) |p| p else {
+                const mem_size_with_len: usize = @sizeOf(usize) + new_size;
+                const mem_with_len: []u8 = allocator.?.alloc(u8, mem_size_with_len) catch return null;
+                @as(*usize, @ptrCast(@alignCast(mem_with_len.ptr))).* = new_size;
+                return mem_with_len.ptr + @sizeOf(usize);
+            };
+            const old_ptr_with_len: [*]u8 = @as([*]u8, @ptrCast(p)) - @sizeOf(usize);
+            const old_mem_len: usize = @as(*usize, @ptrCast(@alignCast(old_ptr_with_len))).*;
+            const old_mem_with_len: []u8 = old_ptr_with_len[0 .. @sizeOf(usize) + old_mem_len];
+            if (new_size == 0) {
+                allocator.?.free(old_mem_with_len);
+                return null;
+            }
+            const new_mem_with_len: []u8 = allocator.?.realloc(old_mem_with_len, @sizeOf(usize) + new_size) catch return null;
+            @as(*usize, @ptrCast(@alignCast(new_mem_with_len.ptr))).* = new_size;
+            const new_mem: []u8 = new_mem_with_len[@sizeOf(usize)..];
+            return new_mem.ptr;
+        }
+
+        fn free(ptr: ?*anyopaque) callconv(.c) void {
+            const p: *anyopaque = if (ptr) |p| p else return;
+            const ptr_with_len: [*]u8 = @as([*]u8, @ptrCast(p)) - @sizeOf(usize);
+            const mem_len: usize = @as(*usize, @ptrCast(@alignCast(ptr_with_len))).*;
+            const mem_with_len: []u8 = ptr_with_len[0 .. @sizeOf(usize) + mem_len];
+            allocator.?.free(mem_with_len);
+        }
+    };
+
+    try setMemoryFunctions(Functions.malloc, Functions.calloc, Functions.realloc, Functions.free);
 }
 
 pub const ttf = struct {
