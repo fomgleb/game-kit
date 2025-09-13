@@ -180,11 +180,18 @@ pub fn getTextureSize(texture: *Texture) error{SdlError}!Vec2(f32) {
     return Vec2(f32).init(width, height);
 }
 
-pub fn hasRectIntersectionFloat(a: Rect(f32), b: Rect(f32)) bool {
-    return c.SDL_HasRectIntersectionFloat(
-        &.{ .x = a.pos.x, .y = a.pos.y, .w = a.size.x, .h = a.size.y },
-        &.{ .x = b.pos.x, .y = b.pos.y, .w = b.size.x, .h = b.size.y },
-    );
+pub fn hasRectIntersection(T: type, a: Rect(T), b: Rect(T)) bool {
+    return switch (@typeInfo(T)) {
+        .int => c.SDL_HasRectIntersection(
+            &.{ .x = a.pos.x, .y = a.pos.y, .w = a.size.x, .h = a.size.y },
+            &.{ .x = b.pos.x, .y = b.pos.y, .w = b.size.x, .h = b.size.y },
+        ),
+        .float => c.SDL_HasRectIntersectionFloat(
+            &.{ .x = a.pos.x, .y = a.pos.y, .w = a.size.x, .h = a.size.y },
+            &.{ .x = b.pos.x, .y = b.pos.y, .w = b.size.x, .h = b.size.y },
+        ),
+        else => @compileError("Impossible rectangle"),
+    };
 }
 
 pub fn createTextureFromSurface(renderer: *Renderer, surface: *Surface) error{SdlError}!*Texture {

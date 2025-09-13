@@ -7,6 +7,8 @@ pub fn Rect(T: type) type {
         pos: Vec2(T),
         size: Vec2(T),
 
+        pub const zero: Self = .{ .pos = .zero, .size = .zero };
+
         pub fn floatFromInt(self: Self, NewType: type) Rect(NewType) {
             return Rect(NewType){
                 .pos = self.pos.floatFromInt(NewType),

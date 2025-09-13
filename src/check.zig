@@ -3,6 +3,11 @@ const root = @import("root.zig");
 
 pub fn main() void {
     refAllDeclsRecursive(root);
+
+    const num_types = [_]type{ u8, i8, u16, i16, i32, f32 };
+    inline for (num_types) |NumType| {
+        _ = root.sdl.hasRectIntersection(NumType, .zero, .zero);
+    }
 }
 
 pub fn refAllDeclsRecursive(comptime T: type) void {
@@ -28,6 +33,9 @@ fn refFunction(comptime func: anytype) void {
     const func_info = @typeInfo(FuncType).@"fn";
 
     if (func_info.params.len > 0) {
+        inline for (func_info.params) |param|
+            if (param.type == null) return;
+
         comptime var args: std.meta.ArgsTuple(FuncType) = undefined;
 
         // Fill in comptime parameters with dummy values
